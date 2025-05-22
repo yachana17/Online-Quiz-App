@@ -69,3 +69,6 @@ A secure and scalable quiz system built with **Angular**, **Spring Boot**, and *
    ```bash
    git clone <your-repo-url>
    cd backend
+🙋‍♀️ Author
+Yachana
+📧 yach7557@gmail.com

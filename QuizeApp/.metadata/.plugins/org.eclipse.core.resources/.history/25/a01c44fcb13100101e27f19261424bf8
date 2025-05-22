@@ -1,0 +1,44 @@
+package com.quizeserver.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.quizeserver.Repository.UserRepository;
+import com.quizeserver.entity.Users;
+import com.quizeserver.enums.UserRole;
+
+import jakarta.annotation.PostConstruct;
+
+@Service
+public class UserServiceImp implements UserService {
+ 
+	@Autowired
+	private UserRepository userRepository;
+	
+	private void createAdminUser() {
+	  
+		@PostConstruct
+		Users optionalUser =userRepository.findByRole(UserRole.ADMIN);
+		 if(optionalUser==null) {
+			 Users user =new Users();
+			 
+		
+		 user.setName("Admin");
+		 user.setEmail("admin@email.com");
+		 user.setRole(UserRole.ADMIN);
+		 user.setPassword("admin");
+		 userRepository.save(user);
+		 
+		 
+		}
+	}
+		 public Boolean hasUserWithEmail(String email){
+			 return userRepository.findFirstByEmail(email)!=null;
+		 
+		 
+		
+		
+		
+	}
+	
+}

@@ -1,0 +1,14 @@
+package com.quizeserver.service.test;
+
+import org.springframework.stereotype.Service;
+
+import com.quizeserver.dto.QuestionDTO;
+import com.quizeserver.dto.TestDTO;
+   
+@Service
+   public interface TestService {
+	   
+	TestDTO createTest(TestDTO dto);
+	QuestionDTO addQuestiontest(QuestionDTO dto);
+	
+}

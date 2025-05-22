@@ -1,0 +1,126 @@
+package com.quizeserver.service.test;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.apache.catalina.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.quizeserver.Repository.QuestionRepository;
+import com.quizeserver.Repository.TestRepository;
+import com.quizeserver.Repository.TestResultRepository;
+import com.quizeserver.Repository.UserRepository;
+import com.quizeserver.dto.QuestionDTO;
+import com.quizeserver.dto.QuestionResponses;
+import com.quizeserver.dto.SubmitTestDTO;
+import com.quizeserver.dto.TestDTO;
+import com.quizeserver.dto.TestDetailsDTO;
+import com.quizeserver.dto.TestResultDTO;
+import com.quizeserver.entity.Question;
+import com.quizeserver.entity.Test;
+import com.quizeserver.entity.TestResult;
+import com.quizeserver.entity.Users;
+
+import jakarta.persistence.EntityNotFoundException;
+
+@Service
+public class TestServiceImp implements TestService {
+	@Autowired
+	private TestRepository testRepository;
+	
+	@Autowired
+	private QuestionRepository questionRepository;
+	
+	@Autowired
+	private TestResultRepository testResultRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
+	
+	public TestDTO createTest(TestDTO dto) {
+		Test test =new Test();
+		test.setTitle(dto.getTitle());
+		test.setDescription(dto.getDescription());
+		test.setTime(dto.getTime());
+		
+		return testRepository.save(test).getDto();
+	}
+	
+	public QuestionDTO addQuestiontest(QuestionDTO dto) {
+	Optional<Test>optionalTest =testRepository.findById(dto.getId());
+	if(optionalTest.isPresent()) {
+		Question question =new Question();
+		question.setTest(optionalTest.get());
+		question.setQuestiontText(dto.getQuestiontText());
+		question.setOptionA(dto.getOptionA());
+		question.setOptionB(dto.getOptionB());
+		question.setOptionC(dto.getOptionC());
+		question.setOptionD(dto.getOptionD());
+		question.setCorrectOption(dto.getCorrectOption());
+		
+		return questionRepository.save(question).getDto();
+		
+	}
+	throw new EntityNotFoundException("Test Not Found");
+	
+	}
+	
+	public List <TestDTO> getAllTest(){
+		return testRepository.findAll().stream().peek(
+		test-> test.setTime(test.getQuestion()
+		.size()*test.getTime())).collect(Collectors.toList())
+		.stream().map(Test::getDto).collect(Collectors.toList());
+	}
+	
+	public TestDetailsDTO getAllQuestionByTest(Long id) {
+		Optional<Test>optionalTest=testRepository.findById(id);
+		TestDetailsDTO testDetailsDTO=new TestDetailsDTO();
+		if(optionalTest.isPresent()) {
+			TestDTO  testDTO=optionalTest.get().getDto();
+			testDTO.setTime(optionalTest.get().getTime()*optionalTest.get().getQuestion().size());
+			
+			testDetailsDTO.setTestDTO(testDTO);
+			testDetailsDTO.setQuestion(optionalTest.get().getQuestion().stream().map(Question::getDto).toList());
+			return testDetailsDTO;
+		}
+		
+		return testDetailsDTO;
+	}
+	
+	public TestResultDTO submitTset(SubmitTestDTO request) {
+		Test test=testRepository.findById(request.getTestId()).orElseThrow(()-> new EntityNotFoundException("Test Not Found"));
+		
+		Users user =userRepository.findById(request.getUserId()).orElseThrow(()-> new EntityNotFoundException("User Not Found"));
+		
+		int correctAnswers=0;
+		
+		for(QuestionResponses response:request.getResponses()) {
+			
+	     Question question=questionRepository.findById(response.getQuestionId()).orElseThrow(()->
+	     new EntityNotFoundException("Question Not Found"));		  	
+			
+		
+		if(question.getCorrectOption().equals(response.getSelectedOption())) {
+			
+			correctAnswers++;
+		}
+		
+		int totalQuestions = test.getQuestion().size();
+		double percentage =((double)correctAnswers/totalQuestions)*100;
+		
+		TestResult testResult = new TestResult();
+		testResult.setTest(test);
+		testResult.setUser(user);
+		testResult.setTotalQuestion(totalQuestions);
+		testResult.setCorrectAnswer(correctAnswers);
+		testResult.setPercentage(percentage);
+		
+		return testResultRepository.save(testResult).getDto();
+	}
+
+
+
+}

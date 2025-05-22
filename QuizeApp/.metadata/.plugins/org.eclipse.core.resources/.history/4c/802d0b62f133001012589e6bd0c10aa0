@@ -1,0 +1,10 @@
+package com.quizeserver.service.test;
+
+import com.quizeserver.dto.TestDTO;
+
+   public interface TestService {
+	   
+	TestDTO createTest(TestDTO dto);
+	
+	
+}

@@ -1,0 +1,5 @@
+package com.quizeserver.controller;
+
+public class UserController {
+
+}

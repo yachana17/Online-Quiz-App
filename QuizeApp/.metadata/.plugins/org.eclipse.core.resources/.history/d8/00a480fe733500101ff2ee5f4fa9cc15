@@ -1,0 +1,5 @@
+package com.quizeserver.dto;
+
+public class TestDetailsDTO {
+
+}

@@ -1,0 +1,5 @@
+package com.quizeserver.service;
+
+public class UserServiceImp {
+
+}

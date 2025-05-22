@@ -1,0 +1,15 @@
+package com.quizeserver.service;
+
+import org.springframework.stereotype.Service;
+
+import com.quizeserver.entity.Users;
+
+public interface UserService {
+	
+	
+	Users createUser(Users users);
+	Boolean hasUserWithEmail(String email);
+	
+	
+
+}

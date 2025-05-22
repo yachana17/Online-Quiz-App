@@ -1,0 +1,79 @@
+package com.quizeserver.service.test;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.quizeserver.Repository.QuestionRepository;
+import com.quizeserver.Repository.TestRepository;
+import com.quizeserver.dto.QuestionDTO;
+import com.quizeserver.dto.TestDTO;
+import com.quizeserver.dto.TestDetailsDTO;
+import com.quizeserver.entity.Question;
+import com.quizeserver.entity.Test;
+
+import jakarta.persistence.EntityNotFoundException;
+
+@Service
+public class TestServiceImp implements TestService {
+	@Autowired
+	private TestRepository testRepository;
+	
+	@Autowired
+	private QuestionRepository questionRepository;
+	
+	public TestDTO createTest(TestDTO dto) {
+		Test test =new Test();
+		test.setTitle(dto.getTitle());
+		test.setDescription(dto.getDescription());
+		test.setTime(dto.getTime());
+		
+		return testRepository.save(test).getDto();
+	}
+	
+	public QuestionDTO addQuestiontest(QuestionDTO dto) {
+	Optional<Test>optionalTest =testRepository.findById(dto.getId());
+	if(optionalTest.isPresent()) {
+		Question question =new Question();
+		question.setTest(optionalTest.get());
+		question.setQuestiontText(dto.getQuestiontText());
+		question.setOptionA(dto.getOptionA());
+		question.setOptionB(dto.getOptionB());
+		question.setOptionC(dto.getOptionC());
+		question.setOptionD(dto.getOptionD());
+		question.setCorrectOption(dto.getCorrectOption());
+		
+		return questionRepository.save(question).getDto();
+		
+	}
+	throw new EntityNotFoundException("Test Not Found");
+	
+	}
+	
+	public List <TestDTO> getAllTest(){
+		return testRepository.findAll().stream().peek(
+		test-> test.setTime(test.getQuestion()
+		.size()*test.getTime())).collect(Collectors.toList())
+		.stream().map(Test::getDto).collect(Collectors.toList());
+	}
+	
+	public TestDetailsDTO getAllQuestionByTest(Long id) {
+		Optional<Test>optionalTest=testRepository.findById(id);
+		TestDetailsDTO testDetailsDTO=new TestDetailsDTO();
+		if(optionalTest.isPresent()) {
+			TestDTO  testDTO=optionalTest.get().getDto();
+			testDTO.setTime(optionalTest.get().getTime()*optionalTest.get().getQuestion().size());
+			
+			testDetailsDTO.setTestDTO(testDTO);
+			testDetailsDTO.setQuestion(optionalTest.get().getQuestion().stream().map(Question::getDto).toList());
+			return testDetailsDTO;
+		}
+		
+		return testDetailsDTO;
+	}
+
+
+}

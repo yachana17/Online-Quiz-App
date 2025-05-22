@@ -1,0 +1,5 @@
+package com.quizeserver.enums;
+
+public class UserRole {
+
+}

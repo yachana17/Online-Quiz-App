@@ -1,0 +1,5 @@
+package com.quizeserver.security;
+
+public class SecurityConfig {
+
+}

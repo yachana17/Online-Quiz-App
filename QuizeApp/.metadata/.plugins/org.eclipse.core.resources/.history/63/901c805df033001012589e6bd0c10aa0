@@ -1,0 +1,5 @@
+package com.quizeserver.service.test;
+
+public class TestServiceImp implements TestService {
+
+}

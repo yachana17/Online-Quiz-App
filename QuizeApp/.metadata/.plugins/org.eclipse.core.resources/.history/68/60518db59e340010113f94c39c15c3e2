@@ -1,0 +1,26 @@
+package com.quizeserver.service.test;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.quizeserver.Repository.TestRepository;
+import com.quizeserver.dto.TestDTO;
+import com.quizeserver.entity.Test;
+
+@Service
+public class TestServiceImp implements TestService {
+	@Autowired
+	private TestRepository testRepository;
+	
+	
+	public TestDTO createTest(TestDTO dto) {
+		Test test =new Test();
+		test.setTitle(dto.getTitle());
+		test.setDescription(dto.getDescription());
+		test.setTime(dto.getTime());
+		
+		return testRepository.save(test).getDto();
+	}
+
+
+}

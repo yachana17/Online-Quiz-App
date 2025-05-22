@@ -1,0 +1,22 @@
+package com.quizeserver.service.test;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.quizeserver.dto.QuestionDTO;
+import com.quizeserver.dto.SubmitTestDTO;
+import com.quizeserver.dto.TestDTO;
+import com.quizeserver.dto.TestDetailsDTO;
+import com.quizeserver.dto.TestResultDTO;
+import com.quizeserver.entity.Test;
+   
+@Service
+   public interface TestService {
+	   
+	TestDTO createTest(TestDTO dto);
+	QuestionDTO addQuestiontest(QuestionDTO dto);
+	List<TestDTO>getAllTest();
+	TestDetailsDTO getAllQuestionByTest(Long id);
+	 TestResultDTO submitTest(SubmitTestDTO request);
+}

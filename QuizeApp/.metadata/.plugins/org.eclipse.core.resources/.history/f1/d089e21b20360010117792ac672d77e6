@@ -1,0 +1,5 @@
+package com.quizeserver.entity;
+
+public class TestResult {
+
+}

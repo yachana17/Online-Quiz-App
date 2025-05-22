@@ -1,0 +1,20 @@
+package com.quizeserver.Repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.quizeserver.entity.Users;
+import com.quizeserver.enums.UserRole;
+
+@Repository
+public interface UserRepository extends JpaRepository<Users, Long> {
+	
+  Users findByRole(UserRole role);
+  
+  Users findFirstByEmail(String email);
+
+ 
+
+  
+  
+}
